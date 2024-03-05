@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>COPIED MAP FOR SALEM</title>
+	
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+     integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+     crossorigin=""/>
+	 
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+	 
+	<style>
+		* {padding:0px;margin:0px;}
+		html {width:100%;height:100%; background-color:#000;}
+		body {width:100%;height:100%;}
+		#map {width:100%;height:100%;}
+		.gridTile {color:#FFF; font-weight:bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;}
+		#coords {margin-left:4px;}
+	</style>
+	
+  </head>
+  <body>
+	<div id="map"></div>
+	
+	<script>
+		const params = new Proxy(new URLSearchParams(window.location.search), {
+		  get: (searchParams, prop) => searchParams.get(prop),
+		});
+
+		let posX = params.x;
+		let posY = params.y;
+		let posZ = params.zoom;
+
+		if (posX == null)
+			posX = 0;
+		if (posY == null)
+			posY = 0;
+		if (posZ == null)
+			posZ = 0;
+
+		var map = L.map('map', {
+			crs: L.CRS.Simple,
+			minZoom: -6
+		}).setView([posY * 100 * -1, posX * 100], posZ);
+
+		L.tileLayer('map/tiles/tile_{x}_{y}.png?v4', {
+			// [y1, x1] [y2, x2]
+			// [bottom, left], top, right]
+			bounds: [[-30000, -30000], [30000, 30000]],
+			maxZoom: 0,
+			minZoom: -6,
+			tileSize: 100,
+			attribution: 'TESTING'
+		}).addTo(map);
+
+
+		L.GridLayer.DebugCoords = L.GridLayer.extend({
+			createTile: function (coords) {
+				var factor = Math.pow(2, coords.z * -1);
+				var x = ((coords.x) * factor);
+				var y = ((coords.y) * factor);
+				var div = document.createElement('div');
+				div.innerHTML = "<span id='coords'>(" + x+ "," + y + ")</span>";
+				div.style.width = 100 + 'px';
+				div.style.height = 100 + 'px';
+				div.style.fontSize = '10';
+				div.style.borderStyle = 'solid';
+				div.style.borderWidth = '1px';
+				div.style.borderColor = 'black';
+				div.className = "gridTile";
+				return div;
+			}
+		});
+		L.gridLayer.debugCoords = function (opts) {
+			return new L.GridLayer.DebugCoords(opts);
+		};
+
+		map.addLayer(L.gridLayer.debugCoords({tileSize: 100, maxZoom: 0, minZoom: -4,}));
+
+		map.on('moveend', onMoveEnd);
+
+		function convertLatLngToPoint(latlng) {
+			var coords = L.CRS.Simple.latLngToPoint(latlng, 0);
+			var x = coords.x / 100.0;
+			var y = coords.y / 100.0;
+			return L.point(x, y);
+		}
+
+		function onMoveEnd(e) {
+			var coords = convertLatLngToPoint(map.getCenter());
+			window.history.pushState('Map', 'Map', "?x=" + Math.round(coords.x) + "&y=" + Math.round(coords.y) + "&zoom=" + map.getZoom());
+		}
+		
+		map.on('zoomend', function () {
+			map.eachLayer(function (layer) {
+				if (layer instanceof L.Marker) {
+					var icon = layer.getIcon();
+					var faktor = 1;
+					var zoom = map.getZoom();
+					if (zoom < 0)
+						faktor = 1 + (zoom * 0.1);
+
+					icon.options.iconSize = [64 * faktor, 64 * faktor];
+					icon.options.iconAnchor = [32 * faktor, 32 * faktor];
+					layer.setIcon(icon)
+				}
+			});
+		});
+		
+		
+		var icon_market = L.icon({
+			iconUrl: '/icons/market.png',
+			iconSize:     [64, 64],
+			iconAnchor:   [32, 32],
+			popupAnchor:  [0, -32],
+			tooltipAnchor:  [32, 0]
+		});
+		
+		var icon_well = L.icon({
+			iconUrl: '/icons/well.png',
+			iconSize:     [64, 64],
+			iconAnchor:   [32, 32],
+			popupAnchor:  [0, -32],
+			tooltipAnchor:  [32, 0]
+		});
+		
+		var group_icons = new Array();
+		
+		
+		group_icons.push(L.marker([14280 * -1, -12910], { icon: icon_well }).bindTooltip("Public Well<br/>Charter: Dew").on('click', function(e){navigator.clipboard.writeText('Dew');}));
+		group_icons.push(L.marker([3899 * -1, 680], { icon: icon_market }).bindTooltip("Dewmeadows<br/>Charter: Dewmeadows").on('click', function(e){navigator.clipboard.writeText('Dewmeadows');}));
+		
+		var layerGroup_icons = L.layerGroup(group_icons);
+		layerGroup_icons.addTo(map);
+		
+		
+		map.eachLayer(function (layer) {
+			if (layer instanceof L.Marker) {
+				var icon = layer.getIcon();
+				var faktor = 1;
+				var zoom = map.getZoom();
+				if (zoom < 0)
+					faktor = 1 + (zoom * 0.1);
+
+				icon.options.iconSize = [64 * faktor, 64 * faktor];
+				icon.options.iconAnchor = [32 * faktor, 32 * faktor];
+				layer.setIcon(icon)
+			}
+		});
+	</script>
+  </body>
+</html>
