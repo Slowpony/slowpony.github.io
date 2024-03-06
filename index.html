@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>New Haven Salem Map</title>
+	<link rel="icon" href="surveyiconde.png" type="image/x-icon">
 	<link rel="icon" href="surveyicon.png" type="image/x-icon">
 	
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -111,30 +112,12 @@
 					layer.setIcon(icon)
 				}
 			});
-		});
-		
-		
-		var icon_market = L.icon({
-			iconUrl: '/icons/market.png',
-			iconSize:     [64, 64],
-			iconAnchor:   [32, 32],
-			popupAnchor:  [0, -32],
-			tooltipAnchor:  [32, 0]
-		});
-		
-		var icon_well = L.icon({
-			iconUrl: '/icons/well.png',
-			iconSize:     [64, 64],
-			iconAnchor:   [32, 32],
-			popupAnchor:  [0, -32],
-			tooltipAnchor:  [32, 0]
-		});
+		});	
 		
 		var group_icons = new Array();
 		
 		
-		group_icons.push(L.marker([14280 * -1, -12910], { icon: icon_well }).bindTooltip("Public Well<br/>Charter: Dew").on('click', function(e){navigator.clipboard.writeText('Dew');}));
-		group_icons.push(L.marker([3899 * -1, 680], { icon: icon_market }).bindTooltip("Dewmeadows<br/>Charter: Dewmeadows").on('click', function(e){navigator.clipboard.writeText('Dewmeadows');}));
+
 		
 		var layerGroup_icons = L.layerGroup(group_icons);
 		layerGroup_icons.addTo(map);
