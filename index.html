@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>COPIED MAP FOR SALEM</title>
+    <title>New Haven Salem Map</title>
+	<link rel="icon" href="surveyicon.png" type="image/x-icon">
 	
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -48,7 +49,7 @@
 			minZoom: -6
 		}).setView([posY * 100 * -1, posX * 100], posZ);
 
-		L.tileLayer('map/tiles/tile_{x}_{y}.png?v4', {
+		L.tileLayer('map/tiles/{z}/tile_{x}_{y}.png?v4', {
 			// [y1, x1] [y2, x2]
 			// [bottom, left], top, right]
 			bounds: [[-30000, -30000], [30000, 30000]],
