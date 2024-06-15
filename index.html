@@ -49,13 +49,13 @@
 
 		var map = L.map('map', {
 			crs: L.CRS.Simple,
-			minZoom: -5
+			minZoom: -6
 		}).setView([posY * 100 * -1, posX * 100], posZ);
 
 		L.tileLayer('map/tiles/{z}/tile_{x}_{y}.webp?v4', {
 			maxZoom: 0,
-			minZoom: -5,
-			tileSize: 100,
+			minZoom: -6,
+			tileSize: 400,
 		}).addTo(map);
 
 
@@ -95,45 +95,7 @@
 			var coords = convertLatLngToPoint(map.getCenter());
 			window.history.pushState('Map', 'Map', "?x=" + Math.round(coords.x) + "&y=" + Math.round(coords.y) + "&zoom=" + map.getZoom());
 		}
-		
-		map.on('zoomend', function () {
-			map.eachLayer(function (layer) {
-				if (layer instanceof L.Marker) {
-					var icon = layer.getIcon();
-					var faktor = 1;
-					var zoom = map.getZoom();
-					if (zoom < 0)
-						faktor = 1 + (zoom * 0.1);
 
-					icon.options.iconSize = [64 * faktor, 64 * faktor];
-					icon.options.iconAnchor = [32 * faktor, 32 * faktor];
-					layer.setIcon(icon)
-				}
-			});
-		});	
-		
-		var group_icons = new Array();
-		
-		
-
-		
-		var layerGroup_icons = L.layerGroup(group_icons);
-		layerGroup_icons.addTo(map);
-		
-		
-		map.eachLayer(function (layer) {
-			if (layer instanceof L.Marker) {
-				var icon = layer.getIcon();
-				var faktor = 1;
-				var zoom = map.getZoom();
-				if (zoom < 0)
-					faktor = 1 + (zoom * 0.1);
-
-				icon.options.iconSize = [64 * faktor, 64 * faktor];
-				icon.options.iconAnchor = [32 * faktor, 32 * faktor];
-				layer.setIcon(icon)
-			}
-		});
 	</script>
   </body>
 </html>
